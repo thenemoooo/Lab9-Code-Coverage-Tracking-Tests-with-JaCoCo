@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      # Runs the tests, writes the JaCoCo report and enforces the gate
+      # (jacoco:check, branch coverage >= 90%). A violation fails this step.
+      - name: Build, test and check coverage gate
+        run: mvn -B -ntp clean verify
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          if [ -f target/site/jacoco/jacoco.csv ]; then
+            {
+              echo "### JaCoCo coverage"
+              echo ""
+              echo "| Counter | Covered % |"
+              echo "|---|---|"
+              awk -F, 'NR>1 {bm+=$6; bc+=$7; lm+=$8; lc+=$9}
+                       END {printf "| Branch | %.1f%% |\n| Line | %.1f%% |\n", 100*bc/(bm+bc), 100*lc/(lm+lc)}' \
+                  target/site/jacoco/jacoco.csv
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload JaCoCo report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+
+      # Self-test of the gate: a run with only ONE test must be rejected.
+      - name: Coverage gate must fail on a weak test run
+        run: |
+          if mvn -B -ntp clean verify -Dtest='ScholarshipCalculatorTest#letterGradeA' -Dsurefire.failIfNoSpecifiedTests=false; then
+            echo "::error::The coverage gate did not fail for a weak test run"
+            exit 1
+          fi
+          echo "OK: the coverage gate rejected the weak test run."
