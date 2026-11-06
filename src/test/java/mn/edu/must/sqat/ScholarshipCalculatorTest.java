@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
- * Lab 9, Parts A + B + C: happy path, CFG-derived tests (see cfg.png) for 100% branch/line
- * coverage, and the loop-boundary tests (0 / 1 / 2+ iterations) for the loop in gpa().
+ * Lab 9, Parts A - D: happy path, CFG-derived tests (see cfg.png) for 100% branch/line coverage,
+ * loop-boundary tests (0 / 1 / 2+ iterations) and boundary-value tests from the specification.
  */
 class ScholarshipCalculatorTest {
 
@@ -139,5 +141,48 @@ class ScholarshipCalculatorTest {
     @Test
     void scholarshipRejectsNegativeCredits() {
         assertThrows(IllegalArgumentException.class, () -> calc.scholarship(3.0, -1, false));
+    }
+
+    // ---------------- Part D: boundary values taken from the specification ----------------
+
+    @ParameterizedTest(name = "letterGrade({0}) = {1}")
+    @CsvSource({
+        "0,F",
+        "59.99,F",
+        "60,D",
+        "69.99,D",
+        "70,C",
+        "79.99,C",
+        "80,B",
+        "89.99,B",
+        "90,A",
+        "100,A"
+    })
+    void letterGradeBoundaries(double score, String expected) {
+        assertEquals(expected, calc.letterGrade(score));
+    }
+
+    @Test
+    void gpaScoreSixtyCountsAsD() {
+        // spec: 60 is a "D" (1 point), so two scores of exactly 60 average 1.0
+        assertEquals(1.0, calc.gpa(new double[] {60, 60}), 1e-9);
+    }
+
+    @ParameterizedTest(name = "scholarship({0}, {1}, {2}) = {3}")
+    @CsvSource({
+        "3.8,15,false,100",
+        "3.79,15,false,70",
+        "3.8,14,false,70",
+        "3.4,12,false,70",
+        "3.39,12,false,50",
+        "3.4,11,false,50",
+        "3.0,0,false,50",
+        "2.99,20,false,0",
+        "4.0,0,false,50",
+        "0.0,0,false,0",
+        "4.0,15,true,0"
+    })
+    void scholarshipThresholdBoundaries(double gpa, int credits, boolean violation, int expected) {
+        assertEquals(expected, calc.scholarship(gpa, credits, violation));
     }
 }
