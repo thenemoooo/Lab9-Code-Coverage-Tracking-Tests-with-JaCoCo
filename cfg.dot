@@ -1,0 +1,46 @@
+digraph CFG {
+  rankdir=TB; nodesep=0.45; ranksep=0.55; fontname="DejaVu Sans";
+  node [shape=box, style="rounded,filled", fillcolor="#f4f8ff", fontname="DejaVu Sans", fontsize=11];
+  edge [fontname="DejaVu Sans", fontsize=9];
+  labelloc=t; fontsize=15;
+  label="CFG: ScholarshipCalculator.scholarship(double gpa, int credits, boolean hasViolation)\nedge label = condition outcome  |  tests that traverse the edge";
+
+  entry [shape=oval, fillcolor="#dfeedd", label="ENTRY"];
+  n1  [label="N1: gpa < 0"];
+  n2  [label="N2: gpa > 4"];
+  n3  [label="N3: credits < 0"];
+  n4  [shape=box, fillcolor="#ffe3e3", label="N4: throw IllegalArgumentException"];
+  n5  [label="N5: hasViolation"];
+  n6  [label="N6: return 0 (violation)"];
+  n7  [label="N7: gpa >= 3.8"];
+  n8  [label="N8: credits >= 15"];
+  n9  [label="N9: return 100"];
+  n10 [label="N10: gpa >= 3.4"];
+  n11 [label="N11: credits >= 12"];
+  n12 [label="N12: return 70"];
+  n13 [label="N13: gpa >= 3.0"];
+  n14 [label="N14: return 50"];
+  n15 [label="N15: return 0 (no award)"];
+  exit [shape=oval, fillcolor="#dfeedd", label="EXIT"];
+
+  entry -> n1;
+  n1 -> n4  [color="#b00020", label="T  scholarshipRejectsNegativeGpa"];
+  n1 -> n2  [label="F  (all valid-input tests)"];
+  n2 -> n4  [color="#b00020", label="T  scholarshipRejectsGpaAboveFour"];
+  n2 -> n3  [label="F  (all valid-input tests)"];
+  n3 -> n4  [color="#b00020", label="T  scholarshipRejectsNegativeCredits"];
+  n3 -> n5  [label="F  (all valid-input tests)"];
+  n5 -> n6  [label="T  scholarshipViolationGivesZero"];
+  n5 -> n7  [label="F  (all non-violation tests)"];
+  n7 -> n8  [label="T  scholarshipFullAward,\lscholarshipHighGpaLowCreditsFallsTo70\l"];
+  n7 -> n10 [label="F  scholarshipSeventyAward,\lscholarshipMidGpaLowCreditsFallsTo50,\lscholarshipFiftyAward, scholarshipNoAward\l"];
+  n8 -> n9  [label="T  scholarshipFullAward"];
+  n8 -> n10 [label="F  scholarshipHighGpaLowCreditsFallsTo70"];
+  n10 -> n11 [label="T  scholarshipSeventyAward,\lscholarshipMidGpaLowCreditsFallsTo50,\lscholarshipHighGpaLowCreditsFallsTo70\l"];
+  n10 -> n13 [label="F  scholarshipFiftyAward,\lscholarshipNoAward\l"];
+  n11 -> n12 [label="T  scholarshipSeventyAward,\lscholarshipHighGpaLowCreditsFallsTo70\l"];
+  n11 -> n13 [label="F  scholarshipMidGpaLowCreditsFallsTo50"];
+  n13 -> n14 [label="T  scholarshipFiftyAward,\lscholarshipMidGpaLowCreditsFallsTo50\l"];
+  n13 -> n15 [label="F  scholarshipNoAward"];
+  n4 -> exit; n6 -> exit; n9 -> exit; n12 -> exit; n14 -> exit; n15 -> exit;
+}
