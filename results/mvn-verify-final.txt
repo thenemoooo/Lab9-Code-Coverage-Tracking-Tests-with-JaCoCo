@@ -45,9 +45,14 @@
 [INFO] --- jacoco:0.8.12:report (report) @ lab09-jacoco ---
 [INFO] Loading execution data file /Users/nemo/Lab9-Code-Coverage-Tracking-Tests-with-JaCoCo/target/jacoco.exec
 [INFO] Analyzed bundle 'lab09-jacoco' with 1 classes
+[INFO] 
+[INFO] --- jacoco:0.8.12:check (check) @ lab09-jacoco ---
+[INFO] Loading execution data file /Users/nemo/Lab9-Code-Coverage-Tracking-Tests-with-JaCoCo/target/jacoco.exec
+[INFO] Analyzed bundle 'lab09-jacoco' with 1 classes
+[INFO] All coverage checks have been met.
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  1.228 s
-[INFO] Finished at: 2026-11-06T10:08:53+08:00
+[INFO] Total time:  1.205 s
+[INFO] Finished at: 2026-11-06T10:13:54+08:00
 [INFO] ------------------------------------------------------------------------
