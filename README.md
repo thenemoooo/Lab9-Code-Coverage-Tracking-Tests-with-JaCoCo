@@ -2,9 +2,9 @@
 
 ![CI](https://github.com/thenemoooo/Lab9-Code-Coverage-Tracking-Tests-with-JaCoCo/actions/workflows/ci.yml/badge.svg)
 
-- **Нэр:** Nyamod Nyamsuren
+- **Нэр:** Н.Ням-Од
 - **Оюутны код:** B222270805
-- **Хичээл:** F.CSA313 — Программ хангамжийн чанарын баталгаа ба тест (2026)
+- **Хичээл:** F.CSA313 — Программ хангамжийн чанарын баталгаа ба туршилт
 - **Бай:** `ScholarshipCalculator` (`letterGrade`, `gpa`, `scholarship`)
 
 ## Орчин
