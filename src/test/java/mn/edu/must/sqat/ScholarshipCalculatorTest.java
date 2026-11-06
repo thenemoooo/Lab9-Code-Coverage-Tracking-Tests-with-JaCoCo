@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 /**
- * Lab 9, Parts A + B: happy path plus the tests derived from the CFG of scholarship()
- * (see cfg.png) until JaCoCo reports 100% branch and 100% line coverage.
+ * Lab 9, Parts A + B + C: happy path, CFG-derived tests (see cfg.png) for 100% branch/line
+ * coverage, and the loop-boundary tests (0 / 1 / 2+ iterations) for the loop in gpa().
  */
 class ScholarshipCalculatorTest {
 
@@ -64,14 +64,27 @@ class ScholarshipCalculatorTest {
         assertEquals(2.0, calc.gpa(new double[] {95, 85, 75, 65, 30}), 1e-9);
     }
 
+    // ---- loop boundary in gpa(): 0 / 1 / 2+ iterations ----
+
     @Test
-    void gpaRejectsNull() {
+    void gpaLoopZeroIterationsNull() {
         assertThrows(IllegalArgumentException.class, () -> calc.gpa(null));
     }
 
     @Test
-    void gpaRejectsEmptyArray() {
+    void gpaLoopZeroIterationsEmptyArray() {
         assertThrows(IllegalArgumentException.class, () -> calc.gpa(new double[0]));
+    }
+
+    @Test
+    void gpaLoopOneIteration() {
+        assertEquals(4.0, calc.gpa(new double[] {95}), 1e-9);
+    }
+
+    @Test
+    void gpaLoopManyIterations() {
+        // A, B, C, D -> (4 + 3 + 2 + 1) / 4 = 2.5
+        assertEquals(2.5, calc.gpa(new double[] {95, 85, 75, 65}), 1e-9);
     }
 
     // ---------------- scholarship (one test per CFG path, see cfg.png) ----------------
